@@ -186,3 +186,75 @@ When running 'go build -gcflags "-m"', the variable in CreateOnHeap escapes.
   general heap area rather than the function's stack frame, so it can remain
   after the function finishes.
 */
+
+// MAIN
+func main() {
+	// 1. Process Information
+	ExploreProcess()
+	fmt.Println()
+
+	// 2. Math Operations Demo
+	fmt.Println("====== Math Operations ======")
+	f5, _ := Factorial(5)
+	f0, _ := Factorial(0)
+	fmt.Printf("Factorial(5) = %d\n", f5)
+	fmt.Printf("Factorial(0) = %d\n", f0)
+
+	p17, _ := IsPrime(17)
+	p20, _ := IsPrime(20)
+	fmt.Printf("IsPrime(17) = %v\n", p17)
+	fmt.Printf("IsPrime(20) = %v\n", p20)
+
+	pow28, _ := Power(2, 8)
+	fmt.Printf("Power(2, 8) = %d\n", pow28)
+
+	// Error handling demo
+	_, err := Power(2, -1)
+	if err != nil {
+		fmt.Printf("Power Error Handle: %v\n", err)
+	}
+	fmt.Println()
+
+	// 3. Closure Demo
+	fmt.Println("====== Closure Demonstration ======")
+	c1 := MakeCounter(0)
+	c2 := MakeCounter(100)
+	fmt.Printf("Counter1: %d, %d\n", c1(), c1())
+	fmt.Printf("Counter2: %d\n", c2())
+
+	double := MakeMultiplier(2)
+	triple := MakeMultiplier(3)
+	fmt.Printf("Multiplier: 5 * 2 = %d, 5 * 3 = %d\n", double(5), triple(5))
+	fmt.Println()
+
+	// 4. Higher-Order Functions Demo
+	fmt.Println("====== Higher-Order Functions ======")
+	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	fmt.Printf("Original: %v\n", nums)
+
+	squared := Apply(nums, func(x int) int { return x * x })
+	fmt.Printf("Squared:  %v\n", squared)
+
+	evens := Filter(nums, func(x int) bool { return x%2 == 0 })
+	fmt.Printf("Evens:    %v\n", evens)
+
+	sum := Reduce(nums, 0, func(acc, curr int) int { return acc + curr })
+	fmt.Printf("Sum:      %d\n", sum)
+
+	doubleThenAddTen := Compose(func(x int) int { return x + 10 }, func(x int) int { return x * 2 })
+	fmt.Printf("Compose(5): %d (Expected: 20)\n", doubleThenAddTen(5))
+	fmt.Println()
+
+	// 5. Pointer Demo
+	fmt.Println("====== Pointer Demonstration ======")
+	a, b := 5, 10
+	fmt.Printf("Before SwapValues: a=%d, b=%d\n", a, b)
+	SwapValues(a, b)
+	fmt.Printf("After SwapValues:  a=%d, b=%d (originals unchanged)\n", a, b)
+
+	SwapPointers(&a, &b)
+	fmt.Printf("After SwapPointers: a=%d, b=%d (originals changed!)\n", a, b)
+
+	// Escape Analysis Run (triggers the compiler logic)
+	AnalyzeEscape()
+}
