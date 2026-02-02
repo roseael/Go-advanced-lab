@@ -69,3 +69,39 @@ func MakeAccumulator(initial int) (add func(int), sub func(int), get func() int)
 	get = func() int { return acc }
 	return
 }
+
+// Apply returns a new slice with the operation applied to each element
+func Apply(nums []int, operation func(int) int) []int {
+	result := make([]int, len(nums))
+	for i, v := range nums {
+		result[i] = operation(v)
+	}
+	return result
+}
+
+// Filter returns a new slice containing only elements where predicate is true
+func Filter(nums []int, predicate func(int) bool) []int {
+	var result []int
+	for _, v := range nums {
+		if predicate(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// Reduce reduces a slice to a single value
+func Reduce(nums []int, initial int, operation func(acc, curr int) int) int {
+	accumulator := initial
+	for _, v := range nums {
+		accumulator = operation(accumulator, v)
+	}
+	return accumulator
+}
+
+// Compose returns a new function f(g(x))
+func Compose(f func(int) int, g func(int) int) func(int) int {
+	return func(x int) int {
+		return f(g(x))
+	}
+}

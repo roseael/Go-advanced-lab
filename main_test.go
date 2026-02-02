@@ -163,3 +163,44 @@ func TestMakeAccumulator(t *testing.T) {
 		}
 	})
 }
+
+func TestHigherOrder(t *testing.T) {
+	nums := []int{1, 2, 3, 4}
+
+	t.Run("Apply: Square numbers", func(t *testing.T) {
+		square := func(x int) int { return x * x }
+		got := Apply(nums, square)
+		want := []int{1, 4, 9, 16}
+		for i := range got {
+			if got[i] != want[i] {
+				t.Errorf("Apply failed, got %v, want %v", got, want)
+			}
+		}
+	})
+
+	t.Run("Filter: Even numbers", func(t *testing.T) {
+		isEven := func(x int) bool { return x%2 == 0 }
+		got := Filter(nums, isEven)
+		want := []int{2, 4}
+		if len(got) != len(want) || got[0] != 2 || got[1] != 4 {
+			t.Errorf("Filter failed, got %v, want %v", got, want)
+		}
+	})
+
+	t.Run("Reduce: Sum", func(t *testing.T) {
+		sum := func(acc, curr int) int { return acc + curr }
+		got := Reduce(nums, 0, sum)
+		if got != 10 {
+			t.Errorf("Reduce sum failed, got %d, want 10", got)
+		}
+	})
+
+	t.Run("Compose: Double then add two", func(t *testing.T) {
+		addTwo := func(x int) int { return x + 2 }
+		double := func(x int) int { return x * 2 }
+		combined := Compose(addTwo, double) // f(g(x)) -> (5*2) + 2
+		if got := combined(5); got != 12 {
+			t.Errorf("Compose failed, got %d, want 12", got)
+		}
+	})
+}
