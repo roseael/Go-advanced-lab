@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"math"
+	"os"
+"fmt"
 )
 
 // Factorial calculates n!
@@ -104,4 +106,33 @@ func Compose(f func(int) int, g func(int) int) func(int) int {
 	return func(x int) int {
 		return f(g(x))
 	}
+}
+
+// ExploreProcess demonstrates how Go interacts with the OS and process isolation
+func ExploreProcess() {
+	fmt.Println("====== Process Information ======")
+
+	// A Process ID (PID) is a unique number assigned by the OS to a running program.
+	// It's used to manage, track, and signal the program.
+	fmt.Printf("Current Process ID: %d\n", os.Getpid())
+
+	// The Parent Process ID (PPID) is the ID of the process that started this one
+	// (usually your terminal or IDE).
+	fmt.Printf("Parent Process ID: %d\n", os.Getppid())
+
+	data := []int{1, 2, 3, 4, 5}
+
+	// The slice header contains the pointer to the data, length, and capacity.
+	fmt.Printf("Memory address of slice header: %p\n", &data)
+
+	// This is the actual memory address where the first integer is stored.
+	fmt.Printf("Memory address of first element: %p\n", &data[0])
+
+	/*
+	    Process Isolation is a security and stability feature.
+	   It ensures that one process cannot read or write to the memory of
+	   another process without explicit permission from the OS.
+	   This prevents one crashing app from taking down the whole system.
+	*/
+	fmt.Println("Note: Other processes cannot access these memory addresses due to process isolation")
 }
