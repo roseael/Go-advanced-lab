@@ -204,3 +204,21 @@ func TestHigherOrder(t *testing.T) {
 		}
 	})
 }
+
+func TestPointers(t *testing.T) {
+	t.Run("SwapValues should not affect originals", func(t *testing.T) {
+		a, b := 5, 10
+		SwapValues(a, b)
+		if a != 5 || b != 10 {
+			t.Errorf("SwapValues modified originals: a=%d, b=%d", a, b)
+		}
+	})
+
+	t.Run("SwapPointers should affect originals", func(t *testing.T) {
+		a, b := 5, 10
+		SwapPointers(&a, &b)
+		if a != 10 || b != 5 {
+			t.Errorf("SwapPointers failed: a=%d, b=%d", a, b)
+		}
+	})
+}

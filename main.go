@@ -2,9 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"os"
-"fmt"
 )
 
 // Factorial calculates n!
@@ -136,3 +136,53 @@ func ExploreProcess() {
 	*/
 	fmt.Println("Note: Other processes cannot access these memory addresses due to process isolation")
 }
+
+// DoubleValue takes an int. It will NOT modify the original because Go is pass-by-value.
+func DoubleValue(x int) {
+	x = x * 2
+}
+
+// DoublePointer takes a *int. It WILL modify the original because it follows the address.
+func DoublePointer(x *int) {
+	*x = *x * 2
+}
+
+// CreateOnStack returns a value.
+func CreateOnStack() int {
+	x := 42 // This variable stays on the stack
+	return x
+}
+
+// CreateOnHeap returns a pointer.
+// Because the pointer survives after the function ends, Go moves 'x' to the heap.
+func CreateOnHeap() *int {
+	x := 42 // This variable escapes to the heap
+	return &x
+}
+
+func SwapValues(a, b int) (int, int) {
+	return b, a
+}
+
+func SwapPointers(a, b *int) {
+	temp := *a
+	*a = *b
+	*b = temp
+}
+
+// AnalyzeEscape is for the experiment
+func AnalyzeEscape() {
+	_ = CreateOnStack()
+	_ = CreateOnHeap()
+}
+
+/*
+ESCAPE ANALYSIS EXPLANATION:
+When running 'go build -gcflags "-m"', the variable in CreateOnHeap escapes.
+- Which variables escaped? The variable 'x' in CreateOnHeap().
+- Why? Because it returns a pointer to a local variable. If it stayed on the stack,
+  it would be destroyed when the function returns, making the pointer invalid.
+- What does "escapes to heap" mean? It means the memory is allocated in the
+  general heap area rather than the function's stack frame, so it can remain
+  after the function finishes.
+*/
