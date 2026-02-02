@@ -44,3 +44,28 @@ func Power(base, exponent int) (int, error) {
 	}
 	return res, nil
 }
+
+// MakeCounter returns a function that increments a private variable
+func MakeCounter(start int) func() int {
+	count := start
+	return func() int {
+		count++
+		return count
+	}
+}
+
+// MakeMultiplier captures the factor
+func MakeMultiplier(factor int) func(int) int {
+	return func(n int) int {
+		return n * factor
+	}
+}
+
+// MakeAccumulator returns three functions sharing one state
+func MakeAccumulator(initial int) (add func(int), sub func(int), get func() int) {
+	acc := initial
+	add = func(n int) { acc += n }
+	sub = func(n int) { acc -= n }
+	get = func() int { return acc }
+	return
+}

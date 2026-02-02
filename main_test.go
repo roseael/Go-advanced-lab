@@ -91,3 +91,75 @@ func TestPower(t *testing.T) {
 		})
 	}
 }
+
+func TestMakeCounter(t *testing.T) {
+	t.Run("Counter increments correctly", func(t *testing.T) {
+		counter := MakeCounter(0)
+		if got := counter(); got != 1 {
+			t.Errorf("First call = %d, want 1", got)
+		}
+		if got := counter(); got != 2 {
+			t.Errorf("Second call = %d, want 2", got)
+		}
+	})
+
+	t.Run("Counters are independent", func(t *testing.T) {
+		c1 := MakeCounter(0)
+		c2 := MakeCounter(10)
+
+		c1() // becomes 1
+		c2() // becomes 11
+
+		if got1, got2 := c1(), c2(); got1 != 2 || got2 != 12 {
+			t.Errorf("Counters interfered: c1=%d, c2=%d", got1, got2)
+		}
+	})
+}
+
+func TestMakeMultiplier(t *testing.T) {
+	tests := []struct {
+		name   string
+		factor int
+		input  int
+		want   int
+	}{
+		{"Double 5", 2, 5, 10},
+		{"Triple 10", 3, 10, 30},
+		{"Multiply by 0", 0, 100, 0},
+		{"Multiply by negative", -2, 4, -8},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			multiplier := MakeMultiplier(tt.factor)
+			if got := multiplier(tt.input); got != tt.want {
+				t.Errorf("Multiplier(%d) = %d, want %d", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMakeAccumulator(t *testing.T) {
+	add, sub, get := MakeAccumulator(100)
+
+	t.Run("Add and Get", func(t *testing.T) {
+		add(50)
+		if got := get(); got != 150 {
+			t.Errorf("After adding 50, got %d, want 150", got)
+		}
+	})
+
+	t.Run("Subtract and Get", func(t *testing.T) {
+		sub(30)
+		if got := get(); got != 120 {
+			t.Errorf("After subtracting 30, got %d, want 120", got)
+		}
+	})
+
+	t.Run("Independent state", func(t *testing.T) {
+		_, _, get2 := MakeAccumulator(0)
+		if got1, got2 := get(), get2(); got1 == got2 {
+			t.Errorf("Accumulators shared state! Acc1: %d, Acc2: %d", got1, got2)
+		}
+	})
+}
